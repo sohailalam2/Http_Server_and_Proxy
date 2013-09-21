@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--ANT 1.7 is required -->
+<project default="create_run_jar" name="Create Runnable Jar for Project" basedir=".">
+
+    <!-- INITIALIZE -->
+    <target name="init">
+        <deltree dir="${basedir}/bin/distribution"/>
+        <deltree dir="${basedir}/distribution/Http_Server_Proxy"/>
+
+        <mkdir dir="${basedir}/distribution/Http_Server_Proxy/configurations"/>
+        <mkdir dir="${basedir}/distribution/Http_Server_Proxy/documents"/>
+        <mkdir dir="${basedir}/distribution/Http_Server_Proxy/dumps"/>
+        <mkdir dir="${basedir}/distribution/Http_Server_Proxy/logs"/>
+        <mkdir dir="${basedir}/distribution/Http_Server_Proxy/www"/>
+    </target>
+
+    <!-- HTTP SERVER & PROXY CONFIGURATION -->
+    <target name="conf_server">
+        <copydir src="documents" dest="distribution/documents"/>
+        <copydir src="www" dest="distribution/www"/>
+        <copy todir="${basedir}/distribution/Http_Server_Proxy" overwrite="true">
+            <fileset file="${basedir}/run.bat"/>
+            <fileset file="${basedir}/run.sh"/>
+        </copy>
+        <copy todir="${basedir}/distribution/Http_Server_Proxy/configurations" overwrite="true">
+            <fileset file="${basedir}/configurations/server.properties"/>
+        </copy>
+    </target>
+
+    <!-- CREATE THE HTTP SERVER & PROXY JAR -->
+    <target name="create_server_jar" depends="init, conf_server">
+        <jar destfile="${basedir}/distribution/Http_Server_Proxy/http_server_proxy.jar"
+             filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="com.sohail.alam.http.server.HttpServerBootstrap"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/log4j-api-2.0-beta6.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/log4j-core-2.0-beta6.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/netty-all-4.0.0.CR6.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/simple-xml-2.6.jar"/>
+        </jar>
+    </target>
+
+    <!-- BUILD THE COMPLETE PROJECT STEP BY STEP -->
+    <target name="create_run_jar" depends="create_server_jar"/>
+</project>

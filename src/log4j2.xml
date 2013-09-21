@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration strict="true" name="SERVER_LOGS_CONFIG" monitorInterval="10">
+
+    <appenders>
+        <!-- CONSOLE APPENDER -->
+        <Console name="STD_OUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%-p] (%F:%L) - %m%n"/>
+            <filters>
+                <!--<MarkerFilter marker="HEX_DI" onMatch="DENY" onMismatch="ACCEPT"/>-->
+            </filters>
+        </Console>
+
+        <!-- LOG FILE FOR GLB -->
+        <File name="STD_FILE" fileName="logs/server.log" append="false">
+            <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+            <filters>
+                <MarkerFilter marker="HEX_DI" onMatch="DENY" onMismatch="ACCEPT"/>
+                <MarkerFilter marker="BACKEND_DATA" onMatch="DENY" onMismatch="ACCEPT"/>
+                <MarkerFilter marker="FRONTEND_DATA" onMatch="DENY" onMismatch="ACCEPT"/>
+            </filters>
+        </File>
+
+        <!-- SEPARATE LOG FILE FOR HEX-DATA INSPECTOR -->
+        <File name="HEX_DI_FILE" fileName="logs/hex_data_inspector.log" append="false">
+            <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+            <filters>
+                <MarkerFilter marker="HEX_DI" onMatch="ACCEPT" onMismatch="DENY"/>
+            </filters>
+        </File>
+
+        <!-- SEPARATE LOG FILE FOR DATA INSPECTORS -->
+        <File name="DI_FILE" fileName="logs/data_inspector.log" append="false">
+            <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+            <filters>
+                <MarkerFilter marker="BACKEND_DATA" onMatch="ACCEPT" onMismatch="DENY"/>
+                <MarkerFilter marker="FRONTEND_DATA" onMatch="ACCEPT" onMismatch="DENY"/>
+            </filters>
+        </File>
+    </appenders>
+
+    <loggers>
+        <logger name="org.apache.log4j.xml" level="debug">
+            <appender-ref ref="STD_OUT"/>
+        </logger>
+
+        <!--
+            Possible Log Levels: DEBUG, ERROR, FATAL, INFO, TRACE, WARN
+            FATAL -> FATAL
+            ERROR -> ERROR, FATAL
+            WARN  -> ERROR, FATAL, WARN
+            INFO  -> ERROR, FATAL, INFO, WARN
+            DEBUG -> DEBUG, ERROR, FATAL, INFO, WARN
+            TRACE -> DEBUG, ERROR, FATAL, INFO, TRACE, WARN
+
+        -->
+
+        <root level="ERROR">
+            <appender-ref ref="STD_OUT"/>
+            <appender-ref ref="STD_FILE"/>
+            <appender-ref ref="HEX_DI_FILE"/>
+            <appender-ref ref="DI_FILE"/>
+        </root>
+
+        <!-- TURN ON PARTICULAR LOG LEVEL FOR INDIVIDUAL CLASS -->
+        <logger name="com.sohail.alam.http.common.HexDataInspector" level="DEBUG"/>
+    </loggers>
+</configuration>
+
