@@ -7,4 +7,5 @@ package com.sohail.alam.http.proxy;
  * Time: 8:34 PM
  */
 public class ProxyProperties {
+
 }

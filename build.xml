@@ -38,7 +38,7 @@
             </manifest>
             <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/log4j-api-2.0-beta6.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/log4j-core-2.0-beta6.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/netty-all-4.0.0.CR6.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/netty-all.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/simple-xml-2.6.jar"/>
         </jar>
     </target>

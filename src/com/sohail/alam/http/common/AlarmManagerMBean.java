@@ -7,4 +7,5 @@ package com.sohail.alam.http.common;
  * Time: 8:35 PM
  */
 public class AlarmManagerMBean {
+
 }
