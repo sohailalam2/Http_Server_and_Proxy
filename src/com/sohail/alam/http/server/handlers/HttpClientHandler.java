@@ -1,7 +1,6 @@
 package com.sohail.alam.http.server.handlers;
 
 import com.sohail.alam.http.common.MediaType;
-import com.sohail.alam.http.server.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpMethod;
@@ -15,6 +14,7 @@ import static com.sohail.alam.http.common.LoggerManager.LOGGER;
 import static com.sohail.alam.http.common.util.HttpResponseSender.*;
 import static com.sohail.alam.http.server.LocalFileFetcher.FETCHER;
 import static com.sohail.alam.http.server.LocalFileFetcher.LocalFileFetcherCallback;
+import static com.sohail.alam.http.server.ServerProperties.PROP;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 
 /**
@@ -57,7 +57,11 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     private void processHttpRequest() {
         LOGGER.debug("Processing Http Request:\n{}", request);
         this.requestMethod = request.getMethod();
-        this.requestUri = request.getUri();
+        if (request.getUri().endsWith("/")) {
+            this.requestUri = request.getUri() + PROP.defaultPage();
+        } else {
+            this.requestUri = request.getUri();
+        }
 
         FETCHER.fetch(this.requestUri, new FileFetcherCallback());
     }
@@ -93,7 +97,11 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          */
         @Override
         public void exceptionCaught(String path, Throwable cause) {
-            send500InternalServerError(ctx, headers, null, true);
+            if (cause.getMessage().contains("Access is denied")) {
+                send500InternalServerError(ctx, headers, "ACCESS DENIED".getBytes(), true);
+            } else {
+                send500InternalServerError(ctx, headers, null, true);
+            }
         }
 
         /**
@@ -106,7 +114,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
         public void fileNotFound(String path, final Throwable cause) {
             LOGGER.debug("Exception Caught: {}", cause.getMessage());
 
-            FETCHER.fetch(ServerProperties.PROP.page404Path(), new LocalFileFetcherCallback() {
+            FETCHER.fetch(PROP.page404Path(), new LocalFileFetcherCallback() {
                 @Override
                 public void fetchSuccess(String path, byte[] data) {
                     headers.put(CONTENT_TYPE, MediaType.getType(".html"));
