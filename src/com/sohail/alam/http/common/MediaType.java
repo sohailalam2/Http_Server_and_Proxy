@@ -2,6 +2,8 @@ package com.sohail.alam.http.common;
 
 import java.lang.reflect.Field;
 
+import static com.sohail.alam.http.common.LoggerManager.LOGGER;
+
 /**
  * User: Sohail Alam
  * Version: 1.0.0
@@ -710,9 +712,9 @@ public class MediaType {
             field = MediaType.class.getDeclaredField(str);
             return (String) field.get(MediaType.class);
         } catch (NoSuchFieldException e) {
-            System.err.println(e.getMessage());
+            LOGGER.debug("Media Type Exception: {}", e.getMessage());
         } catch (IllegalAccessException e) {
-            System.err.println(e.getMessage());
+            LOGGER.debug("Media Type Exception: {}", e.getMessage());
         }
         return _txt;
     }

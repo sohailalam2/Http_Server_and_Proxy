@@ -1,5 +1,7 @@
 package com.sohail.alam.http.server;
 
+import com.sohail.alam.http.common.Constants;
+
 /**
  * User: Sohail Alam
  * Version: 1.0.0
@@ -8,13 +10,9 @@ package com.sohail.alam.http.server;
  */
 public class HttpServerBootstrap {
 
-    private static String welcomeScreen() {
-        return "Welcome to HTTP Server & Proxy Server\n\n\n";
-    }
-
     public static void main(String[] args) {
 
-        System.out.println(welcomeScreen());
+        System.err.println(Constants.welcomeScreen());
 
         // Load the properties
         ServerProperties.PROP.initialize();

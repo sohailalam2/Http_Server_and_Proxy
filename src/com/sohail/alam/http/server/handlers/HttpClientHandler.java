@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 
+import static com.sohail.alam.http.common.LoggerManager.LOGGER;
 import static com.sohail.alam.http.server.LocalFileFetcher.FETCHER;
 import static com.sohail.alam.http.server.LocalFileFetcher.LocalFileFetcherCallback;
 import static io.netty.buffer.Unpooled.copiedBuffer;
@@ -30,7 +31,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     private String requestUri;
 
     public HttpClientHandler() {
-        System.out.println("######## Http CLient Handler Initialized #########");
+        LOGGER.trace("Http Client Handler Initialized");
     }
 
     @Override
@@ -43,34 +44,27 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     protected void messageReceived(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
         // If decoder failed
         if (!msg.getDecoderResult().isSuccess()) {
+            LOGGER.debug("Could not decode received request");
             // TODO: send error response
             return;
         }
-
         if (msg instanceof HttpRequest) {
             request = (HttpRequest) msg;
-
             processHttpRequest();
         }
     }
 
     private void processHttpRequest() {
-        System.out.println("Processing Http Request");
+        LOGGER.debug("Processing Http Request:\n{}", request);
         this.requestMethod = request.getMethod();
         this.requestUri = request.getUri();
-
-        System.out.println("=======================================================");
-        System.out.println(request);
-        System.out.println("=======================================================");
 
         FETCHER.fetch(this.requestUri, new FileFetcherCallback());
     }
 
-    private void sendFile(byte[] data, String contentType) {
-        System.out.println("Sending File to Client");
-
+    private void sendData(byte[] data, String contentType) {
         ByteBuf dataBuffer = copiedBuffer(data);
-        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, dataBuffer);
+        final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, dataBuffer);
         response.headers().set(CONTENT_TYPE, contentType);
         response.headers().set(CONTENT_LENGTH, dataBuffer.readableBytes());
 
@@ -79,9 +73,9 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    System.out.println("SUCCESS");
+                    LOGGER.debug("Response sent successfully:\n{}", response);
                 } else {
-                    System.err.println("FAILED TO SEND FILE");
+                    LOGGER.debug("Failed to send response");
                 }
             }
         });
@@ -102,8 +96,8 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          */
         @Override
         public void fetchSuccess(String path, byte[] data) {
-            System.out.println("File Successfully fetched: " + data.length);
-            sendFile(data, MediaType.getType(parseFileType(path)));
+            LOGGER.debug("File Successfully fetched, length: {}", data.length);
+            sendData(data, MediaType.getType(parseFileType(path)));
         }
 
         /**
@@ -114,7 +108,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          */
         @Override
         public void fetchFailed(String path, Throwable cause) {
-            System.err.println("EXCEPTION CAUGHT: " + cause.getMessage());
+            LOGGER.debug("Exception Caught: {}", cause.getMessage());
             ctx.channel().closeFuture();
         }
     }

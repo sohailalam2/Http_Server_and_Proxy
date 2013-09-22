@@ -10,7 +10,7 @@
             </filters>
         </Console>
 
-        <!-- LOG FILE FOR GLB -->
+        <!-- LOG FILE FOR HttpServer -->
         <File name="STD_FILE" fileName="logs/server.log" append="false">
             <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
             <filters>
@@ -54,7 +54,7 @@
 
         -->
 
-        <root level="ERROR">
+        <root level="TRACE">
             <appender-ref ref="STD_OUT"/>
             <appender-ref ref="STD_FILE"/>
             <appender-ref ref="HEX_DI_FILE"/>

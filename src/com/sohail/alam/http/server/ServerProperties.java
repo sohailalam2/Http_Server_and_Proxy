@@ -19,7 +19,6 @@ import java.util.Properties;
  */
 public class ServerProperties {
     public static final ServerProperties PROP = new ServerProperties();
-
     private static final Properties SERVER_PROPERTIES = new Properties();
     private final Logger LOGGER = LogManager.getLogger("ServerProperties");
     // Server Network Settings
@@ -42,7 +41,7 @@ public class ServerProperties {
             SERVER_PROPERTIES.load(new FileInputStream(new File("configurations/server.properties")));
 
             // Default Http Server IP => Localhost IP
-            String tempIP = SERVER_PROPERTIES.getProperty("HTTP_SERVER_PORT", InetAddress.getLocalHost().getHostAddress());
+            String tempIP = SERVER_PROPERTIES.getProperty("HTTP_SERVER_IP", InetAddress.getLocalHost().getHostAddress()).trim();
             // TODO: Check for valid ip instead of null
             if (tempIP != null) {
                 HTTP_SERVER_IP = tempIP;
@@ -50,36 +49,37 @@ public class ServerProperties {
                 HTTP_SERVER_IP = InetAddress.getLocalHost().getHostAddress();
             }
             // Default Http Server Port => 8080
-            int parsedPort = Integer.parseInt(SERVER_PROPERTIES.getProperty("HTTP_SERVER_PORT", "8080"));
+            int parsedPort = Integer.parseInt(SERVER_PROPERTIES.getProperty("HTTP_SERVER_PORT", "8080").trim());
             if (parsedPort > 0 && parsedPort < 65536) {
                 HTTP_SERVER_PORT = parsedPort;
             } else {
                 // TODO: Logger - Out of bound port number
                 HTTP_SERVER_PORT = 8080;
             }
-            TCP_NODELAY = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("TCP_NODELAY", "true"));
-            SO_KEEPALIVE = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("SO_KEEPALIVE", "true"));
-            SO_REUSEADDR = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("SO_REUSEADDR", "true"));
-            SO_BACKLOG = Integer.parseInt(SERVER_PROPERTIES.getProperty("SO_BACKLOG", "65536"));
+            TCP_NODELAY = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("TCP_NODELAY", "true").trim());
+            SO_KEEPALIVE = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("SO_KEEPALIVE", "true").trim());
+            SO_REUSEADDR = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("SO_REUSEADDR", "true").trim());
+            SO_BACKLOG = Integer.parseInt(SERVER_PROPERTIES.getProperty("SO_BACKLOG", "65536").trim());
 
             // Defaults to false
-            WEBAPP_PATH = SERVER_PROPERTIES.getProperty("WEBAPP_PATH", "www");
-            IS_GET_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_GET_ALLOWED", "false"));
-            IS_POST_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_POST_ALLOWED", "false"));
-            IS_DELETE_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_DELETE_ALLOWED", "false"));
-            IS_OPTIONS_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_OPTIONS_ALLOWED", "false"));
-            IS_HEAD_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_HEAD_ALLOWED", "false"));
+            WEBAPP_PATH = SERVER_PROPERTIES.getProperty("WEBAPP_PATH", "www").trim();
+            IS_GET_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_GET_ALLOWED", "false").trim());
+            IS_POST_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_POST_ALLOWED", "false").trim());
+            IS_DELETE_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_DELETE_ALLOWED", "false").trim());
+            IS_OPTIONS_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_OPTIONS_ALLOWED", "false").trim());
+            IS_HEAD_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_HEAD_ALLOWED", "false").trim());
 
+            LOGGER.info("Server Properties loaded Successfully");
         }
         // TODO: Logger - Exception handling
         catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.fatal("Configuration File Not Found: {}", e.getMessage());
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            LOGGER.fatal("Problem with Server IP: {}", e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.fatal("Problem Reading Configuration File: {}", e.getMessage());
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            LOGGER.fatal("Input must be an Integer: {}", e.getMessage());
         }
     }
 

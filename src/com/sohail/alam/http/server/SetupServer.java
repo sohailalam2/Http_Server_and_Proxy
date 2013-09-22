@@ -43,7 +43,6 @@ public class SetupServer {
         try {
             ChannelFuture future = serverBootstrap.bind(new InetSocketAddress(ip, port)).sync();
             if (future.isSuccess()) {
-                System.out.println("Http Server Started Successfully @ " + ip + ":" + port);
                 LoggerManager.LOGGER.info("Http Server Started Successfully @ {}:{}", ip, port);
             } else {
                 boss.shutdownGracefully();

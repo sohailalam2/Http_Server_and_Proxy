@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static com.sohail.alam.http.common.LoggerManager.LOGGER;
+
 /**
  * User: Sohail Alam
  * Version: 1.0.0
@@ -18,7 +20,7 @@ public class LocalFileFetcher {
      * Instantiates a new Local file fetcher.
      */
     private LocalFileFetcher() {
-
+        LOGGER.trace("LocalFileFetcher Constructor Initialized");
     }
 
     /**
@@ -29,6 +31,7 @@ public class LocalFileFetcher {
      * @return the normalized path
      */
     private String normalizePath(String path) {
+        String normalizedPath = new String();
         // Make Sure Path Starts with a slash (/)
         if (!path.startsWith("/")) {
             path = "/" + path;
@@ -39,10 +42,12 @@ public class LocalFileFetcher {
         }
         // ./www/somePath
         if (path.startsWith("/" + ServerProperties.PROP.webappPath())) {
-            return "." + path;
+            normalizedPath = "." + path;
         } else {
-            return "./www" + path;
+            normalizedPath = "./www" + path;
         }
+        LOGGER.debug("Normalizing Path '{}' to '{}'", path, normalizedPath);
+        return normalizedPath;
     }
 
     /**
@@ -60,17 +65,20 @@ public class LocalFileFetcher {
             is = new FileInputStream(file);
             fileBytes = new byte[is.available()];
             is.read(fileBytes);
+            LOGGER.debug("File '{}' Fetched Successfully - {} bytes", path, fileBytes.length);
             callback.fetchSuccess(path, fileBytes);
         } catch (FileNotFoundException e) {
+            LOGGER.debug("Exception Caught: {}", e.getMessage());
             callback.fetchFailed(path, e);
         } catch (IOException e) {
+            LOGGER.debug("Exception Caught: {}", e.getMessage());
             callback.fetchFailed(path, e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException ignored) {
-
+                    LOGGER.debug("IO Exception Caught while closing Input Stream in finally, Nothing can be done here");
                 }
             }
         }

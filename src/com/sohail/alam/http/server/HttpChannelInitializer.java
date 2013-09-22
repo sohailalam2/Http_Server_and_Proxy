@@ -7,6 +7,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
+import static com.sohail.alam.http.common.LoggerManager.LOGGER;
+
 /**
  * User: Sohail Alam
  * Version: 1.0.0
@@ -16,10 +18,12 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 public class HttpChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     public HttpChannelInitializer() {
+        LOGGER.trace("HttpChannelInitializer Constructor Initialized");
     }
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
+        LOGGER.debug("Http Channel Initialized => Remote Address: {}", ch.remoteAddress());
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("HttpServerCodec", new HttpServerCodec());
         pipeline.addLast("ChunkedWriteHandler", new ChunkedWriteHandler());
