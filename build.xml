@@ -16,8 +16,8 @@
 
     <!-- HTTP SERVER & PROXY CONFIGURATION -->
     <target name="conf_server">
-        <copydir src="documents" dest="distribution/documents"/>
-        <copydir src="www" dest="distribution/www"/>
+        <copydir src="${basedir}/documents" dest="${basedir}/distribution/Http_Server_Proxy/documents"/>
+        <copydir src="${basedir}/www" dest="${basedir}/distribution/Http_Server_Proxy/www"/>
         <copy todir="${basedir}/distribution/Http_Server_Proxy" overwrite="true">
             <fileset file="${basedir}/run.bat"/>
             <fileset file="${basedir}/run.sh"/>
@@ -36,6 +36,8 @@
                 <attribute name="Main-Class" value="com.sohail.alam.http.server.HttpServerBootstrap"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
+            <fileset dir="${basedir}/out/production/Http_Server_and_Proxy">
+            </fileset>
             <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/log4j-api-2.0-beta6.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/log4j-core-2.0-beta6.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${basedir}/libraries/netty-all.jar"/>
