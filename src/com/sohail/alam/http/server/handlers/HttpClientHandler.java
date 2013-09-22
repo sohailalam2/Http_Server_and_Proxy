@@ -1,21 +1,21 @@
 package com.sohail.alam.http.server.handlers;
 
 import com.sohail.alam.http.common.MediaType;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
+import com.sohail.alam.http.server.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.sohail.alam.http.common.LoggerManager.LOGGER;
+import static com.sohail.alam.http.common.util.HttpResponseSender.*;
 import static com.sohail.alam.http.server.LocalFileFetcher.FETCHER;
 import static com.sohail.alam.http.server.LocalFileFetcher.LocalFileFetcherCallback;
-import static io.netty.buffer.Unpooled.copiedBuffer;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * User: Sohail Alam
@@ -62,31 +62,15 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
         FETCHER.fetch(this.requestUri, new FileFetcherCallback());
     }
 
-    private void sendData(byte[] data, String contentType) {
-        ByteBuf dataBuffer = copiedBuffer(data);
-        final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, dataBuffer);
-        response.headers().set(CONTENT_TYPE, contentType);
-        response.headers().set(CONTENT_LENGTH, dataBuffer.readableBytes());
-
-        ChannelFuture future = this.ctx.channel().write(response);
-        future.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (future.isSuccess()) {
-                    LOGGER.debug("Response sent successfully:\n{}", response);
-                } else {
-                    LOGGER.debug("Failed to send response");
-                }
-            }
-        });
-    }
-
     private String parseFileType(String uri) {
         String fileName = uri.substring(uri.lastIndexOf("/") + 1);
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
     private class FileFetcherCallback implements LocalFileFetcherCallback {
+
+        private Map<String, String> headers = new HashMap<String, String>();
+
         /**
          * Fetch success is called when a file is read successfully and
          * the data is ready to be delivered.
@@ -97,7 +81,19 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
         @Override
         public void fetchSuccess(String path, byte[] data) {
             LOGGER.debug("File Successfully fetched, length: {}", data.length);
-            sendData(data, MediaType.getType(parseFileType(path)));
+            headers.put(CONTENT_TYPE, MediaType.getType(parseFileType(path)));
+            send200OK(ctx, headers, data, true);
+        }
+
+        /**
+         * Exception caught.
+         *
+         * @param path  the path
+         * @param cause the cause
+         */
+        @Override
+        public void exceptionCaught(String path, Throwable cause) {
+            send500InternalServerError(ctx, headers, null, true);
         }
 
         /**
@@ -107,9 +103,28 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          * @param cause the throwable object containing the cause
          */
         @Override
-        public void fetchFailed(String path, Throwable cause) {
+        public void fileNotFound(String path, final Throwable cause) {
             LOGGER.debug("Exception Caught: {}", cause.getMessage());
-            ctx.channel().closeFuture();
+
+            FETCHER.fetch(ServerProperties.PROP.page404Path(), new LocalFileFetcherCallback() {
+                @Override
+                public void fetchSuccess(String path, byte[] data) {
+                    headers.put(CONTENT_TYPE, MediaType.getType(".html"));
+                    send404NotFound(ctx, headers, data, true);
+                }
+
+                @Override
+                public void fileNotFound(String path, Throwable cause) {
+                    send404NotFound(ctx, headers, null, true);
+                }
+
+                @Override
+                public void exceptionCaught(String path, Throwable cause) {
+                    send500InternalServerError(ctx, headers, null, true);
+                }
+            });
+
+
         }
     }
 }

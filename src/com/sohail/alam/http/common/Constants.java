@@ -8,6 +8,11 @@ package com.sohail.alam.http.common;
  */
 public class Constants {
 
+    /**
+     * Welcome screen.
+     *
+     * @return the string
+     */
     public static String welcomeScreen() {
         StringBuilder builder = new StringBuilder();
         builder
@@ -34,6 +39,28 @@ public class Constants {
                 .append(" ______  ______  ______  ______  ______  ______  ______  ______  ______  ______  ______  ______  ______  ______  ______  \n")
                 .append("(______)(______)(______)(______)(______)(______)(______)(______)(______)(______)(______)(______)(______)(______)(______) \n")
                 .append("                                                                                                                         \n");
+
+        return builder.toString();
+    }
+
+    /**
+     * Developer string.
+     *
+     * @return the string
+     */
+    public static String developer() {
+        StringBuilder builder = new StringBuilder();
+
+        return builder.toString();
+    }
+
+    /**
+     * License string.
+     *
+     * @return the string
+     */
+    public static String license() {
+        StringBuilder builder = new StringBuilder();
 
         return builder.toString();
     }

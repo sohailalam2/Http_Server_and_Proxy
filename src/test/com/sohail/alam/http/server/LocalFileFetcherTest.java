@@ -106,7 +106,18 @@ public class LocalFileFetcherTest {
             }
 
             @Override
-            public void fetchFailed(String path, Throwable cause) {
+            public void fileNotFound(String path, Throwable cause) {
+                fail("PATH: " + path + "\nException: " + cause.getMessage());
+            }
+
+            /**
+             * Exception caught.
+             *
+             * @param path  the path
+             * @param cause the cause
+             */
+            @Override
+            public void exceptionCaught(String path, Throwable cause) {
                 fail("PATH: " + path + "\nException: " + cause.getMessage());
             }
         });

@@ -30,6 +30,7 @@ public class ServerProperties {
     private int SO_BACKLOG;
     // Http Services
     private String WEBAPP_PATH;
+    private String PAGE_404_PATH;
     private boolean IS_GET_ALLOWED;
     private boolean IS_POST_ALLOWED;
     private boolean IS_DELETE_ALLOWED;
@@ -63,6 +64,7 @@ public class ServerProperties {
 
             // Defaults to false
             WEBAPP_PATH = SERVER_PROPERTIES.getProperty("WEBAPP_PATH", "www").trim();
+            PAGE_404_PATH = SERVER_PROPERTIES.getProperty("PAGE_404_PATH", "www/404.html").trim();
             IS_GET_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_GET_ALLOWED", "false").trim());
             IS_POST_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_POST_ALLOWED", "false").trim());
             IS_DELETE_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_DELETE_ALLOWED", "false").trim());
@@ -170,4 +172,13 @@ public class ServerProperties {
     public void isHeadMethodAllowed(boolean IS_HEAD_ALLOWED) {
         this.IS_HEAD_ALLOWED = IS_HEAD_ALLOWED;
     }
+
+    public String page404Path() {
+        return this.PAGE_404_PATH;
+    }
+
+    public void page404Path(String path) {
+        this.PAGE_404_PATH = path;
+    }
+
 }

@@ -23,7 +23,7 @@ public class HttpChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        LOGGER.debug("Http Channel Initialized => Remote Address: {}", ch.remoteAddress());
+        LOGGER.info("Http Channel Initialized => Remote Address: {}", ch.remoteAddress());
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("HttpServerCodec", new HttpServerCodec());
         pipeline.addLast("ChunkedWriteHandler", new ChunkedWriteHandler());

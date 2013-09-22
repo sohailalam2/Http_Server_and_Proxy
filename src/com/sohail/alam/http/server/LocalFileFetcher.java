@@ -53,7 +53,8 @@ public class LocalFileFetcher {
     /**
      * Get bytes of the file.
      *
-     * @param path the relative path of the file, which will be normalized automatically
+     * @param path     the relative path of the file, which will be normalized automatically
+     * @param callback the callback
      *
      * @return the byte[] containing the file data
      */
@@ -69,10 +70,10 @@ public class LocalFileFetcher {
             callback.fetchSuccess(path, fileBytes);
         } catch (FileNotFoundException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());
-            callback.fetchFailed(path, e);
+            callback.fileNotFound(path, e);
         } catch (IOException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());
-            callback.fetchFailed(path, e);
+            callback.exceptionCaught(path, e);
         } finally {
             if (is != null) {
                 try {
@@ -103,6 +104,15 @@ public class LocalFileFetcher {
          * @param path  the path from which the file was to be read (Normalized Path)
          * @param cause the throwable object containing the cause
          */
-        public void fetchFailed(String path, Throwable cause);
+        public void fileNotFound(String path, Throwable cause);
+
+
+        /**
+         * Exception caught.
+         *
+         * @param path  the path
+         * @param cause the cause
+         */
+        public void exceptionCaught(String path, Throwable cause);
     }
 }
