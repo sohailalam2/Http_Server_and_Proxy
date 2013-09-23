@@ -697,24 +697,27 @@ public class MediaType {
     public static final String _zmm = "application/vnd.handheld-entertainment+xml";
     public static final String _zaz = "application/vnd.zzazz.deck+xml";
 
-    public static String getType(String str) {
-        if (!str.startsWith(".") && !str.startsWith("_")) {
-            str = "_" + str;
+    /**
+     * Gets Media type from file extension.
+     *
+     * @param extension the extension, example .html or html
+     *
+     * @return the type, example text/html
+     */
+    public static String getType(String extension) {
+        // If extension does not starts with '.' or '_' then prepend '_'
+        if (!extension.startsWith(".") && !extension.startsWith("_")) {
+            extension = "_" + extension;
         }
-        if (str.contains(".")) {
-            str = str.replaceAll("[.]", "_");
+        // If there are minus signs '-' then convert it into '_'
+        if (extension.contains("-")) {
+            extension = extension.replaceAll("-", "_");
         }
-        if (str.contains("-")) {
-            str = str.replaceAll("-", "_");
-        }
+        // Using Java Reflection to determine the Media Type
         Field field = null;
         try {
-            field = MediaType.class.getDeclaredField(str);
+            field = MediaType.class.getDeclaredField(extension);
             return (String) field.get(MediaType.class);
-        } catch (NoSuchFieldException e) {
-            LOGGER.debug("Media Type Exception <NoSuchFieldException>: {}", e.getMessage());
-        } catch (IllegalAccessException e) {
-            LOGGER.debug("Media Type Exception <IllegalAccessException>: {}", e.getMessage());
         } catch (Exception e) {
             LOGGER.debug("Media Type Exception <Exception>: {}", e.getMessage());
         }

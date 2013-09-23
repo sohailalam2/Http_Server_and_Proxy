@@ -21,27 +21,35 @@ public class ServerProperties {
     public static final ServerProperties PROP = new ServerProperties();
     private static final Properties SERVER_PROPERTIES = new Properties();
     private final Logger LOGGER = LogManager.getLogger("ServerProperties");
-    // Server Network Settings
+    // Server Configurations
     private String HTTP_SERVER_IP;
     private int HTTP_SERVER_PORT;
+    // Networking Parameters
     private boolean TCP_NODELAY;
     private boolean SO_KEEPALIVE;
     private boolean SO_REUSEADDR;
     private int SO_BACKLOG;
-    // Http Services
+    // Web App Directory and default file names/paths
     private String WEBAPP_PATH;
-    private String PAGE_404_PATH;
-    private String DEFAULT_PAGE;
-    private boolean IS_GET_ALLOWED;
-    private boolean IS_POST_ALLOWED;
+    private String DEFAULT_INDEX_PAGE;
+    private String DEFAULT_404_PAGE;
+    private String DEFAULT_500_PAGE;
+    // HTTP Methods
+    private boolean IS_CONNECT_ALLOWED;
     private boolean IS_DELETE_ALLOWED;
-    private boolean IS_OPTIONS_ALLOWED;
+    private boolean IS_GET_ALLOWED;
     private boolean IS_HEAD_ALLOWED;
+    private boolean IS_OPTIONS_ALLOWED;
+    private boolean IS_PATCH_ALLOWED;
+    private boolean IS_POST_ALLOWED;
+    private boolean IS_PUT_ALLOWED;
+    private boolean IS_TRACE_ALLOWED;
 
     public void initialize() {
         try {
             SERVER_PROPERTIES.load(new FileInputStream(new File("configurations/server.properties")));
 
+            // Server Configurations
             // Default Http Server IP => Localhost IP
             String tempIP = SERVER_PROPERTIES.getProperty("HTTP_SERVER_IP", InetAddress.getLocalHost().getHostAddress()).trim();
             // TODO: Check for valid ip instead of null
@@ -55,23 +63,32 @@ public class ServerProperties {
             if (parsedPort > 0 && parsedPort < 65536) {
                 HTTP_SERVER_PORT = parsedPort;
             } else {
-                // TODO: Logger - Out of bound port number
+                LOGGER.error("Out of bound port number => {}. Setting it to 8080", parsedPort);
                 HTTP_SERVER_PORT = 8080;
             }
+
+            // Networking Parameters
             TCP_NODELAY = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("TCP_NODELAY", "true").trim());
             SO_KEEPALIVE = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("SO_KEEPALIVE", "true").trim());
             SO_REUSEADDR = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("SO_REUSEADDR", "true").trim());
             SO_BACKLOG = Integer.parseInt(SERVER_PROPERTIES.getProperty("SO_BACKLOG", "65536").trim());
 
-            // Defaults to false
+            // Web App Directory and default file names/paths
             WEBAPP_PATH = SERVER_PROPERTIES.getProperty("WEBAPP_PATH", "www").trim();
-            PAGE_404_PATH = SERVER_PROPERTIES.getProperty("PAGE_404_PATH", "www/404.html").trim();
-            DEFAULT_PAGE = SERVER_PROPERTIES.getProperty("DEFAULT_PAGE", "index.html").trim();
-            IS_GET_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_GET_ALLOWED", "false").trim());
-            IS_POST_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_POST_ALLOWED", "false").trim());
+            DEFAULT_INDEX_PAGE = SERVER_PROPERTIES.getProperty("DEFAULT_INDEX_PAGE", "index.html").trim();
+            DEFAULT_404_PAGE = SERVER_PROPERTIES.getProperty("DEFAULT_404_PAGE", "www/404.html").trim();
+            DEFAULT_500_PAGE = SERVER_PROPERTIES.getProperty("DEFAULT_500_PAGE", "www/500.html").trim();
+
+            // HTTP Methods
+            IS_CONNECT_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_CONNECT_ALLOWED", "false").trim());
             IS_DELETE_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_DELETE_ALLOWED", "false").trim());
-            IS_OPTIONS_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_OPTIONS_ALLOWED", "false").trim());
+            IS_GET_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_GET_ALLOWED", "false").trim());
             IS_HEAD_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_HEAD_ALLOWED", "false").trim());
+            IS_OPTIONS_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_OPTIONS_ALLOWED", "false").trim());
+            IS_POST_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_POST_ALLOWED", "false").trim());
+            IS_PATCH_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_PATCH_ALLOWED", "false").trim());
+            IS_PUT_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_PUT_ALLOWED", "false").trim());
+            IS_TRACE_ALLOWED = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("IS_TRACE_ALLOWED", "false").trim());
 
             LOGGER.info("Server Properties loaded Successfully");
         }
@@ -135,20 +152,12 @@ public class ServerProperties {
         this.WEBAPP_PATH = path;
     }
 
-    public boolean isGetMethodAllowed() {
-        return IS_GET_ALLOWED;
+    public boolean isConnectMethodAllowed() {
+        return IS_CONNECT_ALLOWED;
     }
 
-    public void isGetMethodAllowed(boolean IS_GET_ALLOWED) {
-        this.IS_GET_ALLOWED = IS_GET_ALLOWED;
-    }
-
-    public boolean isPostMethodAllowed() {
-        return IS_POST_ALLOWED;
-    }
-
-    public void isPostMethodAllowed(boolean IS_POST_ALLOWED) {
-        this.IS_POST_ALLOWED = IS_POST_ALLOWED;
+    public void isConnectMethodAllowed(boolean IS_CONNECT_ALLOWED) {
+        this.IS_CONNECT_ALLOWED = IS_CONNECT_ALLOWED;
     }
 
     public boolean isDeleteMethodAllowed() {
@@ -159,12 +168,12 @@ public class ServerProperties {
         this.IS_DELETE_ALLOWED = IS_DELETE_ALLOWED;
     }
 
-    public boolean isOptionsMethodAllowed() {
-        return IS_OPTIONS_ALLOWED;
+    public boolean isGetMethodAllowed() {
+        return IS_GET_ALLOWED;
     }
 
-    public void isOptionsMethodAllowed(boolean IS_OPTIONS_ALLOWED) {
-        this.IS_OPTIONS_ALLOWED = IS_OPTIONS_ALLOWED;
+    public void isGetMethodAllowed(boolean IS_GET_ALLOWED) {
+        this.IS_GET_ALLOWED = IS_GET_ALLOWED;
     }
 
     public boolean isHeadMethodAllowed() {
@@ -175,19 +184,67 @@ public class ServerProperties {
         this.IS_HEAD_ALLOWED = IS_HEAD_ALLOWED;
     }
 
+    public boolean isOptionsMethodAllowed() {
+        return IS_OPTIONS_ALLOWED;
+    }
+
+    public void isOptionsMethodAllowed(boolean IS_OPTIONS_ALLOWED) {
+        this.IS_OPTIONS_ALLOWED = IS_OPTIONS_ALLOWED;
+    }
+
+    public boolean isPatchMethodAllowed() {
+        return IS_PATCH_ALLOWED;
+    }
+
+    public void isPatchMethodAllowed(boolean IS_PATCH_ALLOWED) {
+        this.IS_PATCH_ALLOWED = IS_PATCH_ALLOWED;
+    }
+
+    public boolean isPostMethodAllowed() {
+        return IS_POST_ALLOWED;
+    }
+
+    public void isPostMethodAllowed(boolean IS_POST_ALLOWED) {
+        this.IS_POST_ALLOWED = IS_POST_ALLOWED;
+    }
+
+    public boolean isPutMethodAllowed() {
+        return IS_PUT_ALLOWED;
+    }
+
+    public void isPutMethodAllowed(boolean IS_PUT_ALLOWED) {
+        this.IS_PUT_ALLOWED = IS_PUT_ALLOWED;
+    }
+
+    public boolean isTraceMethodAllowed() {
+        return IS_TRACE_ALLOWED;
+    }
+
+    public void isTraceMethodAllowed(boolean IS_TRACE_ALLOWED) {
+        this.IS_TRACE_ALLOWED = IS_TRACE_ALLOWED;
+    }
+
+    public String defaultIndexPage() {
+        return this.DEFAULT_INDEX_PAGE;
+    }
+
+    public void defaultIndexPage(String path) {
+        this.DEFAULT_INDEX_PAGE = path;
+    }
+
     public String default404Page() {
-        return this.PAGE_404_PATH;
+        return this.DEFAULT_404_PAGE;
     }
 
-    public void page404Path(String path) {
-        this.PAGE_404_PATH = path;
+    public void default404Page(String path) {
+        this.DEFAULT_404_PAGE = path;
     }
 
-    public String defaultPage() {
-        return this.DEFAULT_PAGE;
+    public String default500Page() {
+        return this.DEFAULT_500_PAGE;
     }
 
-    public void defaultPage(String path) {
-        this.DEFAULT_PAGE = path;
+    public void default500Page(String path) {
+        this.DEFAULT_500_PAGE = path;
     }
 }

@@ -53,7 +53,7 @@ public class LocalFileFetcher {
         }
         // If path ends with a "/" then append the default page to it (Eg. index.html)
         if (path.endsWith("/")) {
-            path = path + PROP.defaultPage();
+            path = path + PROP.defaultIndexPage();
         }
         // ./www/somePath
         if (path.startsWith("/" + ServerProperties.PROP.webappPath())) {

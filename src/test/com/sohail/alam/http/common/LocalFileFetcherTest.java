@@ -55,7 +55,7 @@ public class LocalFileFetcherTest {
     @Test
     public void testNormalizePath() throws Exception {
         // Test for /
-        assertEquals("The path was not normalized properly: ", "./www/" + PROP.defaultPage(), invokeNormalizePath("/"));
+        assertEquals("The path was not normalized properly: ", "./www/" + PROP.defaultIndexPage(), invokeNormalizePath("/"));
 
         List<String> pathsToNormalize = new ArrayList<String>();
         pathsToNormalize.add("abc");
@@ -69,7 +69,7 @@ public class LocalFileFetcherTest {
 
         // Other cases
         String expectedPath1 = "./www/abc";
-        String expectedPath2 = "./www/abc/" + PROP.defaultPage();
+        String expectedPath2 = "./www/abc/" + PROP.defaultIndexPage();
         for (String path : pathsToNormalize) {
             String actualPath = invokeNormalizePath(path);
             if (path.endsWith("/")) {

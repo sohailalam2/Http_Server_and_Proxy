@@ -1,5 +1,6 @@
 package com.sohail.alam.http.server;
 
+import com.sohail.alam.http.common.util.HttpMethodCodes;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpMethod;
@@ -13,6 +14,7 @@ import static com.sohail.alam.http.common.LoggerManager.LOGGER;
 import static com.sohail.alam.http.common.util.HttpResponseSender.*;
 import static com.sohail.alam.http.common.util.LocalFileFetcher.FETCHER;
 import static com.sohail.alam.http.common.util.LocalFileFetcher.LocalFileFetcherCallback;
+import static com.sohail.alam.http.server.ServerProperties.PROP;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 
@@ -82,6 +84,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOGGER.debug("Handler Exception Caught: {}", cause.getMessage());
         send500InternalServerError(ctx, null, null, true);
     }
 
@@ -93,7 +96,148 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
         this.requestUri = request.getUri();
         LOGGER.info("Request Received: => {} => {} => {}", this.ctx.channel().remoteAddress(), this.requestMethod, this.requestUri);
         LOGGER.debug("Processing Http Request:\n{}", request);
+
+        switch (HttpMethodCodes.httpMethodCode.get(this.requestMethod)) {
+
+            case HttpMethodCodes.CONNECT:
+                if (PROP.isConnectMethodAllowed()) {
+                    processHttpConnectRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.DELETE:
+                if (PROP.isDeleteMethodAllowed()) {
+                    processHttpDeleteRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.GET:
+                if (PROP.isGetMethodAllowed()) {
+                    processHttpGetRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.HEAD:
+                if (PROP.isHeadMethodAllowed()) {
+                    processHttpHeadRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.OPTIONS:
+                if (PROP.isOptionsMethodAllowed()) {
+                    processHttpOptionsRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.PATCH:
+                if (PROP.isPatchMethodAllowed()) {
+                    processHttpPatchRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.POST:
+                if (PROP.isPostMethodAllowed()) {
+                    processHttpPostRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.PUT:
+                if (PROP.isPutMethodAllowed()) {
+                    processHttpPutRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            case HttpMethodCodes.TRACE:
+                if (PROP.isTraceMethodAllowed()) {
+                    processHttpTraceRequest();
+                } else {
+                    send405MethodNotAllowed(ctx, null, null, true);
+                }
+                break;
+
+            default:
+                send405MethodNotAllowed(ctx, null, null, true);
+                break;
+        }
+    }
+
+    /**
+     * Process http connect request.
+     */
+    private void processHttpConnectRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http delete request.
+     */
+    private void processHttpDeleteRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http patch request.
+     */
+    private void processHttpPatchRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http get request.
+     */
+    private void processHttpGetRequest() {
         FETCHER.fetch(this.requestUri, new FileFetcherCallback());
+    }
+
+    /**
+     * Process http head request.
+     */
+    private void processHttpHeadRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http options request.
+     */
+    private void processHttpOptionsRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http post request.
+     */
+    private void processHttpPostRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http put request.
+     */
+    private void processHttpPutRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
+    }
+
+    /**
+     * Process http trace request.
+     */
+    private void processHttpTraceRequest() {
+        send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
@@ -110,7 +254,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          * @param path       the path from which the file was read (Normalized Path)
          * @param data       the data as byte array
          * @param mediaType  the media type
-         * @param dataLength
+         * @param dataLength the data length
          */
         @Override
         public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
