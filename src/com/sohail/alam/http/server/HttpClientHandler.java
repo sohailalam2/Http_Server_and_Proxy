@@ -1,6 +1,5 @@
-package com.sohail.alam.http.server.handlers;
+package com.sohail.alam.http.server;
 
-import com.sohail.alam.http.common.MediaType;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpMethod;
@@ -12,9 +11,9 @@ import java.util.Map;
 
 import static com.sohail.alam.http.common.LoggerManager.LOGGER;
 import static com.sohail.alam.http.common.util.HttpResponseSender.*;
-import static com.sohail.alam.http.server.LocalFileFetcher.FETCHER;
-import static com.sohail.alam.http.server.LocalFileFetcher.LocalFileFetcherCallback;
-import static com.sohail.alam.http.server.ServerProperties.PROP;
+import static com.sohail.alam.http.common.util.LocalFileFetcher.FETCHER;
+import static com.sohail.alam.http.common.util.LocalFileFetcher.LocalFileFetcherCallback;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 
 /**
@@ -30,47 +29,76 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     private HttpMethod requestMethod;
     private String requestUri;
 
+    /**
+     * Instantiates a new Http client handler.
+     */
     public HttpClientHandler() {
         LOGGER.trace("Http Client Handler Initialized");
     }
 
+    /**
+     * Channel active.
+     *
+     * @param ctx the ctx
+     *
+     * @throws Exception the exception
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         this.ctx = ctx;
     }
 
+    /**
+     * Message received.
+     *
+     * @param ctx the ctx
+     * @param msg the msg
+     *
+     * @throws Exception the exception
+     */
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
         // If decoder failed
         if (!msg.getDecoderResult().isSuccess()) {
             LOGGER.debug("Could not decode received request");
-            // TODO: send error response
+            send400BadRequest(ctx, null, "Could not decode received request".getBytes(), true);
             return;
         }
+        // If the msg is a HttpRequest then process it
         if (msg instanceof HttpRequest) {
             request = (HttpRequest) msg;
             processHttpRequest();
         }
     }
 
-    private void processHttpRequest() {
-        LOGGER.debug("Processing Http Request:\n{}", request);
-        this.requestMethod = request.getMethod();
-        if (request.getUri().endsWith("/")) {
-            this.requestUri = request.getUri() + PROP.defaultPage();
-        } else {
-            this.requestUri = request.getUri();
-        }
+    /**
+     * Exception caught.
+     *
+     * @param ctx   the ctx
+     * @param cause the cause
+     *
+     * @throws Exception the exception
+     */
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        send500InternalServerError(ctx, null, null, true);
+    }
 
+    /**
+     * Process http request.
+     */
+    private void processHttpRequest() {
+        this.requestMethod = request.getMethod();
+        this.requestUri = request.getUri();
+        LOGGER.info("Request Received: => {} => {} => {}", this.ctx.channel().remoteAddress(), this.requestMethod, this.requestUri);
+        LOGGER.debug("Processing Http Request:\n{}", request);
         FETCHER.fetch(this.requestUri, new FileFetcherCallback());
     }
 
-    private String parseFileType(String uri) {
-        String fileName = uri.substring(uri.lastIndexOf("/") + 1);
-        return fileName.substring(fileName.lastIndexOf("."));
-    }
-
+    /**
+     * The type File fetcher callback.
+     */
     private class FileFetcherCallback implements LocalFileFetcherCallback {
 
         private Map<String, String> headers = new HashMap<String, String>();
@@ -79,13 +107,16 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          * Fetch success is called when a file is read successfully and
          * the data is ready to be delivered.
          *
-         * @param path the path from which the file was read (Normalized Path)
-         * @param data the data as byte array
+         * @param path       the path from which the file was read (Normalized Path)
+         * @param data       the data as byte array
+         * @param mediaType  the media type
+         * @param dataLength
          */
         @Override
-        public void fetchSuccess(String path, byte[] data) {
+        public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
             LOGGER.debug("File Successfully fetched, length: {}", data.length);
-            headers.put(CONTENT_TYPE, MediaType.getType(parseFileType(path)));
+            headers.put(CONTENT_TYPE, mediaType);
+            headers.put(CONTENT_LENGTH, String.valueOf(dataLength));
             send200OK(ctx, headers, data, true);
         }
 
@@ -113,26 +144,12 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
         @Override
         public void fileNotFound(String path, final Throwable cause) {
             LOGGER.debug("Exception Caught: {}", cause.getMessage());
-
-            FETCHER.fetch(PROP.page404Path(), new LocalFileFetcherCallback() {
-                @Override
-                public void fetchSuccess(String path, byte[] data) {
-                    headers.put(CONTENT_TYPE, MediaType.getType(".html"));
-                    send404NotFound(ctx, headers, data, true);
-                }
-
-                @Override
-                public void fileNotFound(String path, Throwable cause) {
-                    send404NotFound(ctx, headers, null, true);
-                }
-
-                @Override
-                public void exceptionCaught(String path, Throwable cause) {
-                    send500InternalServerError(ctx, headers, null, true);
-                }
-            });
-
-
+            // Check if access is denied or file not found
+            if (cause.getMessage().contains("(Access is denied)")) {
+                send403Forbidden(ctx, headers, null, true);
+            } else {
+                send404NotFound(ctx, headers, null, true);
+            }
         }
     }
 }

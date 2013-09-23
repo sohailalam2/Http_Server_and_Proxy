@@ -1,6 +1,6 @@
 package com.sohail.alam.http.server;
 
-import com.sohail.alam.http.server.handlers.HttpClientHandler;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -22,8 +22,13 @@ public class HttpChannelInitializer extends ChannelInitializer<SocketChannel> {
     }
 
     @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOGGER.debug("Exception Caught in Channel Initializer: " + cause.getMessage());
+    }
+
+    @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        LOGGER.info("Http Channel Initialized => Remote Address: {}", ch.remoteAddress());
+        LOGGER.debug("Http Channel Initialized => Remote Address: {}", ch.remoteAddress());
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("HttpServerCodec", new HttpServerCodec());
         pipeline.addLast("ChunkedWriteHandler", new ChunkedWriteHandler());

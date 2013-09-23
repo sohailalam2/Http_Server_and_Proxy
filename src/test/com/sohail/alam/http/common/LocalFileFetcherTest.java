@@ -1,6 +1,6 @@
-package test.com.sohail.alam.http.server;
+package test.com.sohail.alam.http.common;
 
-import com.sohail.alam.http.server.LocalFileFetcher;
+import com.sohail.alam.http.common.util.LocalFileFetcher;
 import com.sohail.alam.http.server.ServerProperties;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sohail.alam.http.server.ServerProperties.PROP;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -54,7 +55,7 @@ public class LocalFileFetcherTest {
     @Test
     public void testNormalizePath() throws Exception {
         // Test for /
-        assertEquals("The path was not normalized properly: ", "./www", invokeNormalizePath("/"));
+        assertEquals("The path was not normalized properly: ", "./www/" + PROP.defaultPage(), invokeNormalizePath("/"));
 
         List<String> pathsToNormalize = new ArrayList<String>();
         pathsToNormalize.add("abc");
@@ -67,10 +68,15 @@ public class LocalFileFetcherTest {
         pathsToNormalize.add("/www/abc/");
 
         // Other cases
-        String expectedPath = "./www/abc";
+        String expectedPath1 = "./www/abc";
+        String expectedPath2 = "./www/abc/" + PROP.defaultPage();
         for (String path : pathsToNormalize) {
             String actualPath = invokeNormalizePath(path);
-            assertEquals("The path was not normalized properly: ", expectedPath, actualPath);
+            if (path.endsWith("/")) {
+                assertEquals("The path was not normalized properly: ", expectedPath2, actualPath);
+            } else {
+                assertEquals("The path was not normalized properly: ", expectedPath1, actualPath);
+            }
         }
     }
 
@@ -101,7 +107,7 @@ public class LocalFileFetcherTest {
     public void testGetBytes() throws Exception {
         fetcher.fetch("/www/index.html", new LocalFileFetcher.LocalFileFetcherCallback() {
             @Override
-            public void fetchSuccess(String path, byte[] data) {
+            public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
                 Assert.assertTrue("Data Received of length <= 0", data.length > 0);
             }
 

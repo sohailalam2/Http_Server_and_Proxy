@@ -1,4 +1,4 @@
-package com.sohail.alam.http.common;
+package com.sohail.alam.http.common.util;
 
 import java.lang.reflect.Field;
 
@@ -712,9 +712,11 @@ public class MediaType {
             field = MediaType.class.getDeclaredField(str);
             return (String) field.get(MediaType.class);
         } catch (NoSuchFieldException e) {
-            LOGGER.debug("Media Type Exception: {}", e.getMessage());
+            LOGGER.debug("Media Type Exception <NoSuchFieldException>: {}", e.getMessage());
         } catch (IllegalAccessException e) {
-            LOGGER.debug("Media Type Exception: {}", e.getMessage());
+            LOGGER.debug("Media Type Exception <IllegalAccessException>: {}", e.getMessage());
+        } catch (Exception e) {
+            LOGGER.debug("Media Type Exception <Exception>: {}", e.getMessage());
         }
         return _txt;
     }

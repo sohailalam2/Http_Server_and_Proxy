@@ -1,4 +1,6 @@
-package com.sohail.alam.http.server;
+package com.sohail.alam.http.common.util;
+
+import com.sohail.alam.http.server.ServerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static com.sohail.alam.http.common.LoggerManager.LOGGER;
+import static com.sohail.alam.http.server.ServerProperties.PROP;
 
 /**
  * User: Sohail Alam
@@ -24,6 +27,18 @@ public class LocalFileFetcher {
     }
 
     /**
+     * Parse file type.
+     *
+     * @param pathInfo the path info
+     *
+     * @return the string
+     */
+    private String parseFileType(String pathInfo) {
+        String fileName = pathInfo.substring(pathInfo.lastIndexOf("/") + 1);
+        return fileName.substring(fileName.lastIndexOf("."));
+    }
+
+    /**
      * Normalize a given relative path String to get the actual path String
      *
      * @param path the path
@@ -36,9 +51,9 @@ public class LocalFileFetcher {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        // Make sure path does not ends in "/"
+        // If path ends with a "/" then append the default page to it (Eg. index.html)
         if (path.endsWith("/")) {
-            path = path.substring(0, path.lastIndexOf("/"));
+            path = path + PROP.defaultPage();
         }
         // ./www/somePath
         if (path.startsWith("/" + ServerProperties.PROP.webappPath())) {
@@ -65,9 +80,9 @@ public class LocalFileFetcher {
         try {
             is = new FileInputStream(file);
             fileBytes = new byte[is.available()];
-            is.read(fileBytes);
-            LOGGER.debug("File '{}' Fetched Successfully - {} bytes", path, fileBytes.length);
-            callback.fetchSuccess(path, fileBytes);
+            int length = is.read(fileBytes);
+            LOGGER.debug("File '{}' Fetched Successfully - {} bytes", path, length);
+            callback.fetchSuccess(path, fileBytes, MediaType.getType(parseFileType(file.getName())), length);
         } catch (FileNotFoundException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());
             callback.fileNotFound(path, e);
@@ -93,10 +108,12 @@ public class LocalFileFetcher {
          * Fetch success is called when a file is read successfully and
          * the data is ready to be delivered.
          *
-         * @param path the path from which the file was read (Normalized Path)
-         * @param data the data as byte array
+         * @param path       the path from which the file was read (Normalized Path)
+         * @param data       the data as byte array
+         * @param mediaType  the media type
+         * @param dataLength
          */
-        public void fetchSuccess(String path, byte[] data);
+        public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength);
 
         /**
          * Fetch failed is called whenever there was an error reading the file

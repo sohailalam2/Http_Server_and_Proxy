@@ -175,7 +175,7 @@ public class ServerProperties {
         this.IS_HEAD_ALLOWED = IS_HEAD_ALLOWED;
     }
 
-    public String page404Path() {
+    public String default404Page() {
         return this.PAGE_404_PATH;
     }
 

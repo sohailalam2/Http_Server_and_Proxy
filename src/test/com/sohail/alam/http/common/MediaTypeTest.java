@@ -1,6 +1,6 @@
 package test.com.sohail.alam.http.common;
 
-import com.sohail.alam.http.common.MediaType;
+import com.sohail.alam.http.common.util.MediaType;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
