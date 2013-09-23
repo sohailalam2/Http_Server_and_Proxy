@@ -54,7 +54,7 @@
 
         -->
 
-        <root level="ERROR">
+        <root level="INFO">
             <appender-ref ref="STD_OUT"/>
             <appender-ref ref="STD_FILE"/>
             <appender-ref ref="HEX_DI_FILE"/>

@@ -70,7 +70,7 @@ public class LocalFileFetcher {
             callback.fetchSuccess(path, fileBytes);
         } catch (FileNotFoundException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());
-            callback.exceptionCaught(path, e);
+            callback.fileNotFound(path, e);
         } catch (IOException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());
             callback.exceptionCaught(path, e);
