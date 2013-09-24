@@ -1,4 +1,4 @@
-package com.sohail.alam.http.common.util;
+package com.sohail.alam.http.common.utils;
 
 import java.lang.reflect.Field;
 
@@ -709,6 +709,12 @@ public class MediaType {
         if (!extension.startsWith(".") && !extension.startsWith("_")) {
             extension = "_" + extension;
         }
+
+        // If there are dot signs 's' then convert it into '_'
+        if (extension.contains(".")) {
+            extension = extension.replaceAll("[.]", "_");
+        }
+
         // If there are minus signs '-' then convert it into '_'
         if (extension.contains("-")) {
             extension = extension.replaceAll("-", "_");

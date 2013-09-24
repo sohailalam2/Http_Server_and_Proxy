@@ -1,6 +1,7 @@
 package test.com.sohail.alam.http.common;
 
-import com.sohail.alam.http.common.util.LocalFileFetcher;
+import com.sohail.alam.http.common.utils.LocalFileFetcher;
+import com.sohail.alam.http.common.utils.LocalFileFetcherCallback;
 import com.sohail.alam.http.server.ServerProperties;
 import org.junit.After;
 import org.junit.Assert;
@@ -55,7 +56,7 @@ public class LocalFileFetcherTest {
     @Test
     public void testNormalizePath() throws Exception {
         // Test for /
-        assertEquals("The path was not normalized properly: ", "./www/" + PROP.defaultIndexPage(), invokeNormalizePath("/"));
+        assertEquals("The path was not normalized properly: ", "./www/" + PROP.DEFAULT_INDEX_PAGE, invokeNormalizePath("/"));
 
         List<String> pathsToNormalize = new ArrayList<String>();
         pathsToNormalize.add("abc");
@@ -69,7 +70,7 @@ public class LocalFileFetcherTest {
 
         // Other cases
         String expectedPath1 = "./www/abc";
-        String expectedPath2 = "./www/abc/" + PROP.defaultIndexPage();
+        String expectedPath2 = "./www/abc/" + PROP.DEFAULT_INDEX_PAGE;
         for (String path : pathsToNormalize) {
             String actualPath = invokeNormalizePath(path);
             if (path.endsWith("/")) {
@@ -105,7 +106,7 @@ public class LocalFileFetcherTest {
      */
     @Test
     public void testGetBytes() throws Exception {
-        fetcher.fetch("/www/index.html", new LocalFileFetcher.LocalFileFetcherCallback() {
+        fetcher.fetch(PROP.DEFAULT_INDEX_PAGE, new LocalFileFetcherCallback() {
             @Override
             public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
                 Assert.assertTrue("Data Received of length <= 0", data.length > 0);

@@ -34,10 +34,10 @@ public class SetupServer {
 
         serverBootstrap.group(boss, worker)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, ServerProperties.PROP.soBacklog())
-                .childOption(ChannelOption.TCP_NODELAY, ServerProperties.PROP.tcpNoDelay())
-                .childOption(ChannelOption.SO_KEEPALIVE, ServerProperties.PROP.soKeepAlive())
-                .childOption(ChannelOption.SO_REUSEADDR, ServerProperties.PROP.soReuseAddress())
+                .option(ChannelOption.SO_BACKLOG, ServerProperties.PROP.SO_BACKLOG)
+                .childOption(ChannelOption.TCP_NODELAY, ServerProperties.PROP.TCP_NODELAY)
+                .childOption(ChannelOption.SO_KEEPALIVE, ServerProperties.PROP.SO_KEEPALIVE)
+                .childOption(ChannelOption.SO_REUSEADDR, ServerProperties.PROP.SO_REUSEADDR)
                 .childHandler(new HttpChannelInitializer());
 
         try {

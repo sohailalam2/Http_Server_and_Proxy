@@ -1,6 +1,7 @@
 package com.sohail.alam.http.server;
 
-import com.sohail.alam.http.common.util.HttpMethodCodes;
+import com.sohail.alam.http.common.utils.HttpMethodCodes;
+import com.sohail.alam.http.common.utils.LocalFileFetcherCallback;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpMethod;
@@ -11,9 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.sohail.alam.http.common.LoggerManager.LOGGER;
-import static com.sohail.alam.http.common.util.HttpResponseSender.*;
-import static com.sohail.alam.http.common.util.LocalFileFetcher.FETCHER;
-import static com.sohail.alam.http.common.util.LocalFileFetcher.LocalFileFetcherCallback;
+import static com.sohail.alam.http.common.utils.HttpResponseSender.*;
+import static com.sohail.alam.http.common.utils.LocalFileFetcher.FETCHER;
 import static com.sohail.alam.http.server.ServerProperties.PROP;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
@@ -100,7 +100,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
         switch (HttpMethodCodes.httpMethodCode.get(this.requestMethod)) {
 
             case HttpMethodCodes.CONNECT:
-                if (PROP.isConnectMethodAllowed()) {
+                if (PROP.IS_CONNECT_ALLOWED) {
                     processHttpConnectRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -108,7 +108,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.DELETE:
-                if (PROP.isDeleteMethodAllowed()) {
+                if (PROP.IS_DELETE_ALLOWED) {
                     processHttpDeleteRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -116,7 +116,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.GET:
-                if (PROP.isGetMethodAllowed()) {
+                if (PROP.IS_GET_ALLOWED) {
                     processHttpGetRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -124,7 +124,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.HEAD:
-                if (PROP.isHeadMethodAllowed()) {
+                if (PROP.IS_HEAD_ALLOWED) {
                     processHttpHeadRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -132,7 +132,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.OPTIONS:
-                if (PROP.isOptionsMethodAllowed()) {
+                if (PROP.IS_OPTIONS_ALLOWED) {
                     processHttpOptionsRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -140,7 +140,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.PATCH:
-                if (PROP.isPatchMethodAllowed()) {
+                if (PROP.IS_PATCH_ALLOWED) {
                     processHttpPatchRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -148,7 +148,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.POST:
-                if (PROP.isPostMethodAllowed()) {
+                if (PROP.IS_POST_ALLOWED) {
                     processHttpPostRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -156,7 +156,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.PUT:
-                if (PROP.isPutMethodAllowed()) {
+                if (PROP.IS_PUT_ALLOWED) {
                     processHttpPutRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -164,7 +164,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
                 break;
 
             case HttpMethodCodes.TRACE:
-                if (PROP.isTraceMethodAllowed()) {
+                if (PROP.IS_TRACE_ALLOWED) {
                     processHttpTraceRequest();
                 } else {
                     send405MethodNotAllowed(ctx, null, null, true);
@@ -178,21 +178,21 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
 
     /**
-     * Process http connect request.
+     * TODO: Process http connect request.
      */
     private void processHttpConnectRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * Process http delete request.
+     * TODO: Process http delete request.
      */
     private void processHttpDeleteRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * Process http patch request.
+     * TODO: Process http patch request.
      */
     private void processHttpPatchRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
@@ -206,42 +206,42 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
 
     /**
-     * Process http head request.
+     * TODO: Process http head request.
      */
     private void processHttpHeadRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * Process http options request.
+     * TODO: Process http options request.
      */
     private void processHttpOptionsRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * Process http post request.
+     * TODO: Process http post request.
      */
     private void processHttpPostRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * Process http put request.
+     * TODO: Process http put request.
      */
     private void processHttpPutRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * Process http trace request.
+     * TODO: Process http trace request.
      */
     private void processHttpTraceRequest() {
         send200OK(ctx, null, "Functionality to be provided soon!".getBytes(), true);
     }
 
     /**
-     * The type File fetcher callback.
+     * The File fetcher callback class.
      */
     private class FileFetcherCallback implements LocalFileFetcherCallback {
 
@@ -272,6 +272,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          */
         @Override
         public void exceptionCaught(String path, Throwable cause) {
+            LOGGER.debug("Exception Caught: {}", cause.getMessage());
             if (cause.getMessage().contains("Access is denied")) {
                 send500InternalServerError(ctx, headers, "ACCESS DENIED".getBytes(), true);
             } else {
@@ -287,7 +288,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          */
         @Override
         public void fileNotFound(String path, final Throwable cause) {
-            LOGGER.debug("Exception Caught: {}", cause.getMessage());
+            LOGGER.debug("File Not Found: {}", cause.getMessage());
             // Check if access is denied or file not found
             if (cause.getMessage().contains("(Access is denied)")) {
                 send403Forbidden(ctx, headers, null, true);

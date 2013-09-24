@@ -22,28 +22,31 @@ public class ServerProperties {
     private static final Properties SERVER_PROPERTIES = new Properties();
     private final Logger LOGGER = LogManager.getLogger("ServerProperties");
     // Server Configurations
-    private String HTTP_SERVER_IP;
-    private int HTTP_SERVER_PORT;
+    public String HTTP_SERVER_IP;
+    public int HTTP_SERVER_PORT;
+    // Php Service
+    public boolean ENABLE_PHP;
+    public String PHP_INSTALL_PATH;
     // Networking Parameters
-    private boolean TCP_NODELAY;
-    private boolean SO_KEEPALIVE;
-    private boolean SO_REUSEADDR;
-    private int SO_BACKLOG;
+    public boolean TCP_NODELAY;
+    public boolean SO_KEEPALIVE;
+    public boolean SO_REUSEADDR;
+    public int SO_BACKLOG;
     // Web App Directory and default file names/paths
-    private String WEBAPP_PATH;
-    private String DEFAULT_INDEX_PAGE;
-    private String DEFAULT_404_PAGE;
-    private String DEFAULT_500_PAGE;
+    public String WEBAPP_PATH;
+    public String DEFAULT_INDEX_PAGE;
+    public String DEFAULT_404_PAGE;
+    public String DEFAULT_500_PAGE;
     // HTTP Methods
-    private boolean IS_CONNECT_ALLOWED;
-    private boolean IS_DELETE_ALLOWED;
-    private boolean IS_GET_ALLOWED;
-    private boolean IS_HEAD_ALLOWED;
-    private boolean IS_OPTIONS_ALLOWED;
-    private boolean IS_PATCH_ALLOWED;
-    private boolean IS_POST_ALLOWED;
-    private boolean IS_PUT_ALLOWED;
-    private boolean IS_TRACE_ALLOWED;
+    public boolean IS_CONNECT_ALLOWED;
+    public boolean IS_DELETE_ALLOWED;
+    public boolean IS_GET_ALLOWED;
+    public boolean IS_HEAD_ALLOWED;
+    public boolean IS_OPTIONS_ALLOWED;
+    public boolean IS_PATCH_ALLOWED;
+    public boolean IS_POST_ALLOWED;
+    public boolean IS_PUT_ALLOWED;
+    public boolean IS_TRACE_ALLOWED;
 
     public void initialize() {
         try {
@@ -58,6 +61,11 @@ public class ServerProperties {
             } else {
                 HTTP_SERVER_IP = InetAddress.getLocalHost().getHostAddress();
             }
+
+            // Php Service
+            ENABLE_PHP = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("ENABLE_PHP", "true").trim());
+            PHP_INSTALL_PATH = SERVER_PROPERTIES.getProperty("PHP_INSTALL_PATH", "php");
+
             // Default Http Server Port => 8080
             int parsedPort = Integer.parseInt(SERVER_PROPERTIES.getProperty("HTTP_SERVER_PORT", "8080").trim());
             if (parsedPort > 0 && parsedPort < 65536) {
@@ -102,149 +110,5 @@ public class ServerProperties {
         } catch (NumberFormatException e) {
             LOGGER.fatal("Input must be an Integer: {}", e.getMessage());
         }
-    }
-
-    public String httpServerIP() {
-        return HTTP_SERVER_IP;
-    }
-
-    public int httpServerPort() {
-        return HTTP_SERVER_PORT;
-    }
-
-    public boolean tcpNoDelay() {
-        return TCP_NODELAY;
-    }
-
-    public void tcpNoDelay(boolean TCP_NODELAY) {
-        this.TCP_NODELAY = TCP_NODELAY;
-    }
-
-    public boolean soKeepAlive() {
-        return SO_KEEPALIVE;
-    }
-
-    public void soKeepAlive(boolean SO_KEEPALIVE) {
-        this.SO_KEEPALIVE = SO_KEEPALIVE;
-    }
-
-    public boolean soReuseAddress() {
-        return SO_REUSEADDR;
-    }
-
-    public void soReuseAddress(boolean SO_REUSEADDR) {
-        this.SO_REUSEADDR = SO_REUSEADDR;
-    }
-
-    public int soBacklog() {
-        return SO_BACKLOG;
-    }
-
-    public void soBacklog(int SO_BACKLOG) {
-        this.SO_BACKLOG = SO_BACKLOG;
-    }
-
-    public String webappPath() {
-        return WEBAPP_PATH;
-    }
-
-    public void webappPath(String path) {
-        this.WEBAPP_PATH = path;
-    }
-
-    public boolean isConnectMethodAllowed() {
-        return IS_CONNECT_ALLOWED;
-    }
-
-    public void isConnectMethodAllowed(boolean IS_CONNECT_ALLOWED) {
-        this.IS_CONNECT_ALLOWED = IS_CONNECT_ALLOWED;
-    }
-
-    public boolean isDeleteMethodAllowed() {
-        return IS_DELETE_ALLOWED;
-    }
-
-    public void isDeleteMethodAllowed(boolean IS_DELETE_ALLOWED) {
-        this.IS_DELETE_ALLOWED = IS_DELETE_ALLOWED;
-    }
-
-    public boolean isGetMethodAllowed() {
-        return IS_GET_ALLOWED;
-    }
-
-    public void isGetMethodAllowed(boolean IS_GET_ALLOWED) {
-        this.IS_GET_ALLOWED = IS_GET_ALLOWED;
-    }
-
-    public boolean isHeadMethodAllowed() {
-        return IS_HEAD_ALLOWED;
-    }
-
-    public void isHeadMethodAllowed(boolean IS_HEAD_ALLOWED) {
-        this.IS_HEAD_ALLOWED = IS_HEAD_ALLOWED;
-    }
-
-    public boolean isOptionsMethodAllowed() {
-        return IS_OPTIONS_ALLOWED;
-    }
-
-    public void isOptionsMethodAllowed(boolean IS_OPTIONS_ALLOWED) {
-        this.IS_OPTIONS_ALLOWED = IS_OPTIONS_ALLOWED;
-    }
-
-    public boolean isPatchMethodAllowed() {
-        return IS_PATCH_ALLOWED;
-    }
-
-    public void isPatchMethodAllowed(boolean IS_PATCH_ALLOWED) {
-        this.IS_PATCH_ALLOWED = IS_PATCH_ALLOWED;
-    }
-
-    public boolean isPostMethodAllowed() {
-        return IS_POST_ALLOWED;
-    }
-
-    public void isPostMethodAllowed(boolean IS_POST_ALLOWED) {
-        this.IS_POST_ALLOWED = IS_POST_ALLOWED;
-    }
-
-    public boolean isPutMethodAllowed() {
-        return IS_PUT_ALLOWED;
-    }
-
-    public void isPutMethodAllowed(boolean IS_PUT_ALLOWED) {
-        this.IS_PUT_ALLOWED = IS_PUT_ALLOWED;
-    }
-
-    public boolean isTraceMethodAllowed() {
-        return IS_TRACE_ALLOWED;
-    }
-
-    public void isTraceMethodAllowed(boolean IS_TRACE_ALLOWED) {
-        this.IS_TRACE_ALLOWED = IS_TRACE_ALLOWED;
-    }
-
-    public String defaultIndexPage() {
-        return this.DEFAULT_INDEX_PAGE;
-    }
-
-    public void defaultIndexPage(String path) {
-        this.DEFAULT_INDEX_PAGE = path;
-    }
-
-    public String default404Page() {
-        return this.DEFAULT_404_PAGE;
-    }
-
-    public void default404Page(String path) {
-        this.DEFAULT_404_PAGE = path;
-    }
-
-    public String default500Page() {
-        return this.DEFAULT_500_PAGE;
-    }
-
-    public void default500Page(String path) {
-        this.DEFAULT_500_PAGE = path;
     }
 }

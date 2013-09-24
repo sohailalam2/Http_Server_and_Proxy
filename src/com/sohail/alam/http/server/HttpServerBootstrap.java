@@ -18,7 +18,7 @@ public class HttpServerBootstrap {
         ServerProperties.PROP.initialize();
 
         // Start the Http Server
-        SetupServer.instance(ServerProperties.PROP.httpServerIP(), ServerProperties.PROP.httpServerPort())
+        SetupServer.instance(ServerProperties.PROP.HTTP_SERVER_IP, ServerProperties.PROP.HTTP_SERVER_PORT)
                 .initialize();
     }
 }

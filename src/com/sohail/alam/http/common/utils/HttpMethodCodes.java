@@ -1,4 +1,4 @@
-package com.sohail.alam.http.common.util;
+package com.sohail.alam.http.common.utils;
 
 import io.netty.handler.codec.http.HttpMethod;
 

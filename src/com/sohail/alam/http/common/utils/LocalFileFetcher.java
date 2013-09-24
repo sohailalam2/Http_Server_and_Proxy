@@ -1,5 +1,7 @@
-package com.sohail.alam.http.common.util;
+package com.sohail.alam.http.common.utils;
 
+import com.sohail.alam.http.common.utils.php.PhpProcessor;
+import com.sohail.alam.http.common.utils.php.PhpProcessorCallback;
 import com.sohail.alam.http.server.ServerProperties;
 
 import java.io.File;
@@ -53,16 +55,44 @@ public class LocalFileFetcher {
         }
         // If path ends with a "/" then append the default page to it (Eg. index.html)
         if (path.endsWith("/")) {
-            path = path + PROP.defaultIndexPage();
+            path = path + PROP.DEFAULT_INDEX_PAGE;
         }
         // ./www/somePath
-        if (path.startsWith("/" + ServerProperties.PROP.webappPath())) {
+        if (path.startsWith("/" + ServerProperties.PROP.WEBAPP_PATH)) {
             normalizedPath = "." + path;
         } else {
             normalizedPath = "./www" + path;
         }
         LOGGER.debug("Normalizing Path '{}' to '{}'", path, normalizedPath);
         return normalizedPath;
+    }
+
+    /**
+     * Process php file.
+     *
+     * @param phpFilePath the php file path
+     * @param callback    the callback
+     */
+    private <T extends LocalFileFetcherCallback> void processPhpFile(final String phpFilePath, final T callback) {
+        PhpProcessor.processPhp(phpFilePath, new PhpProcessorCallback() {
+            @Override
+            public void success(String fileName, byte[] data, int dataLength) {
+                LOGGER.debug("Successfully processed PHP File '{}' - {} bytes", fileName, dataLength);
+                callback.fetchSuccess(phpFilePath, data, MediaType.getType(".html"), dataLength);
+            }
+
+            @Override
+            public void failure(String fileName, byte[] data, int dataLength) {
+                LOGGER.debug("Failed to processed PHP File '{}' - {} bytes", fileName, dataLength);
+                callback.fetchSuccess(phpFilePath, data, MediaType.getType(".html"), dataLength);
+            }
+
+            @Override
+            public void exceptionCaught(String fileName, Throwable cause) {
+                LOGGER.debug("Exception Caught while processing PHP File '{}': ", fileName, cause.getMessage());
+                callback.exceptionCaught(phpFilePath, cause);
+            }
+        });
     }
 
     /**
@@ -77,12 +107,20 @@ public class LocalFileFetcher {
         final byte[] fileBytes;
         final File file = new File(this.normalizePath(path));
         FileInputStream is = null;
+
         try {
-            is = new FileInputStream(file);
-            fileBytes = new byte[is.available()];
-            int length = is.read(fileBytes);
-            LOGGER.debug("File '{}' Fetched Successfully - {} bytes", path, length);
-            callback.fetchSuccess(path, fileBytes, MediaType.getType(parseFileType(file.getName())), length);
+            // If the file referred is a PHP File then
+            // parse using PHP Processor, if PHP Processing is enabled
+            // FileNotFound is taken care of here instead of PhpProcessor
+            if (PROP.ENABLE_PHP && file.getName().endsWith(".php")) {
+                processPhpFile(file.getAbsolutePath(), callback);
+            } else {
+                is = new FileInputStream(file);
+                fileBytes = new byte[is.available()];
+                int length = is.read(fileBytes);
+                LOGGER.debug("File '{}' Fetched Successfully - {} bytes", path, length);
+                callback.fetchSuccess(path, fileBytes, MediaType.getType(parseFileType(file.getName())), length);
+            }
         } catch (FileNotFoundException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());
             callback.fileNotFound(path, e);
@@ -98,38 +136,5 @@ public class LocalFileFetcher {
                 }
             }
         }
-    }
-
-    /**
-     * The interface Local file fetcher callback which must be used to receive callbacks
-     */
-    public interface LocalFileFetcherCallback {
-        /**
-         * Fetch success is called when a file is read successfully and
-         * the data is ready to be delivered.
-         *
-         * @param path       the path from which the file was read (Normalized Path)
-         * @param data       the data as byte array
-         * @param mediaType  the media type
-         * @param dataLength
-         */
-        public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength);
-
-        /**
-         * Fetch failed is called whenever there was an error reading the file
-         *
-         * @param path  the path from which the file was to be read (Normalized Path)
-         * @param cause the throwable object containing the cause
-         */
-        public void fileNotFound(String path, Throwable cause);
-
-
-        /**
-         * Exception caught.
-         *
-         * @param path  the path
-         * @param cause the cause
-         */
-        public void exceptionCaught(String path, Throwable cause);
     }
 }

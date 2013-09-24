@@ -1,4 +1,4 @@
-package com.sohail.alam.http.common.util;
+package com.sohail.alam.http.common.utils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.sohail.alam.http.common.LoggerManager.LOGGER;
-import static com.sohail.alam.http.common.util.LocalFileFetcher.FETCHER;
+import static com.sohail.alam.http.common.utils.LocalFileFetcher.FETCHER;
 import static com.sohail.alam.http.server.ServerProperties.PROP;
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
@@ -177,7 +177,7 @@ public class HttpResponseSender {
 
         // If data is null then try to send the default 404 Page
         if (data == null) {
-            FETCHER.fetch(PROP.default404Page(), new LocalFileFetcher.LocalFileFetcherCallback() {
+            FETCHER.fetch(PROP.DEFAULT_404_PAGE, new LocalFileFetcherCallback() {
                 // Send the default 404 Page if found
                 @Override
                 public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
