@@ -27,6 +27,14 @@ public interface PhpProcessorCallback {
     public void failure(String fileName, byte[] data, int dataLength);
 
     /**
+     * File not found.
+     *
+     * @param fileName the file name
+     * @param cause    the cause
+     */
+    public void fileNotFound(String fileName, Throwable cause);
+
+    /**
      * Exception caught.
      *
      * @param fileName the file name

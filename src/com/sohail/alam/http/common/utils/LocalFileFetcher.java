@@ -88,6 +88,12 @@ public class LocalFileFetcher {
             }
 
             @Override
+            public void fileNotFound(String fileName, Throwable cause) {
+                LOGGER.debug("File Not Found: {}", cause.getMessage());
+                callback.fileNotFound(fileName, cause);
+            }
+
+            @Override
             public void exceptionCaught(String fileName, Throwable cause) {
                 LOGGER.debug("Exception Caught while processing PHP File '{}': ", fileName, cause.getMessage());
                 callback.exceptionCaught(phpFilePath, cause);

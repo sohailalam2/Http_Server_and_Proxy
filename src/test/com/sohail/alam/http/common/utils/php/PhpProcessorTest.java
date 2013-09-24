@@ -47,6 +47,11 @@ public class PhpProcessorTest {
             }
 
             @Override
+            public void fileNotFound(String fileName, Throwable cause) {
+                fail(cause.getMessage());
+            }
+
+            @Override
             public void exceptionCaught(String fileName, Throwable cause) {
                 fail(cause.getMessage());
             }

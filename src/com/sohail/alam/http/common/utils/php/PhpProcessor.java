@@ -1,6 +1,7 @@
 package com.sohail.alam.http.common.utils.php;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -52,14 +53,16 @@ public class PhpProcessor {
         Process p = null;
 
         try {
+            if (!file.exists()) {
+                callback.fileNotFound(phpFile, new FileNotFoundException("The requested PHP File does not exists: " + phpFile));
+            }
+
             processBuilder = new ProcessBuilder(PROP.PHP_INSTALL_PATH, file.getAbsolutePath());
             processBuilder.redirectErrorStream(false);
             p = processBuilder.start();
 //            p.waitFor();
             successLength = copyResult(p.getInputStream(), successBuilder);
             failureLength = copyResult(p.getErrorStream(), failureBuilder);
-
-            System.out.println("**************\n" + new String(successBuilder.toString().getBytes()) + "\n\n");
 
             callback.success(phpFile, successBuilder.toString().getBytes(), successLength);
             if (failureLength > 0) {
