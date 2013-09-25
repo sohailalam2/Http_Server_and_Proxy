@@ -47,7 +47,7 @@ public class LocalFileFetcher {
      *
      * @return the normalized path
      */
-    private String normalizePath(String path) {
+    public String normalizePath(String path) {
         String normalizedPath = new String();
         // Make Sure Path Starts with a slash (/)
         if (!path.startsWith("/")) {

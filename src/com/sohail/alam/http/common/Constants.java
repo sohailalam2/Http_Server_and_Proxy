@@ -1,6 +1,10 @@
 package com.sohail.alam.http.common;
 
 /**
+ * This class is responsible for holding some constants,
+ * generally String information, such as the welcome screen,
+ * developers name, license etc.
+ * <p/>
  * User: Sohail Alam
  * Version: 1.0.0
  * Date: 22/9/13
@@ -9,9 +13,16 @@ package com.sohail.alam.http.common;
 public class Constants {
 
     /**
+     * Private Constructor
+     */
+    private Constants() {
+
+    }
+
+    /**
      * Welcome screen.
      *
-     * @return the string
+     * @return the string containing the welcome screen.
      */
     public static String welcomeScreen() {
         StringBuilder builder = new StringBuilder();
@@ -45,7 +56,7 @@ public class Constants {
     }
 
     /**
-     * Developer string.
+     * Developers Name.
      *
      * @return the string
      */

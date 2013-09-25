@@ -21,6 +21,7 @@ public class ServerProperties {
     public static final ServerProperties PROP = new ServerProperties();
     private static final Properties SERVER_PROPERTIES = new Properties();
     private final Logger LOGGER = LogManager.getLogger("ServerProperties");
+    public String DEFAULT_LOG_LEVEL;
     // Server Configurations
     public String HTTP_SERVER_IP;
     public int HTTP_SERVER_PORT;
@@ -51,6 +52,9 @@ public class ServerProperties {
     public void initialize() {
         try {
             SERVER_PROPERTIES.load(new FileInputStream(new File("configurations/server.properties")));
+
+            // Default Log Level
+            DEFAULT_LOG_LEVEL = SERVER_PROPERTIES.getProperty("DEFAULT_LOG_LEVEL", "ERROR").trim();
 
             // Server Configurations
             // Default Http Server IP => Localhost IP

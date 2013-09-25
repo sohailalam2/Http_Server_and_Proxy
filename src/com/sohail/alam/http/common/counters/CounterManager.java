@@ -1,4 +1,4 @@
-package com.sohail.alam.http.common;
+package com.sohail.alam.http.common.counters;
 
 /**
  * User: Sohail Alam

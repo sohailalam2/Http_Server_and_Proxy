@@ -1,4 +1,4 @@
-package com.sohail.alam.http.alarm;
+package com.sohail.alam.http.common.alarms;
 
 /**
  * User: Sohail Alam

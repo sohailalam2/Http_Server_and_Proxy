@@ -1,4 +1,4 @@
-package com.sohail.alam.http.alarm;
+package com.sohail.alam.http.common.alarms;
 
 /**
  * User: Sohail Alam
@@ -13,7 +13,7 @@ package com.sohail.alam.http.alarm;
  * <pre>
  * &lt;165&gt;1 2003-10-11T22:14:15.003Z mymachine.example.com
  * evntslog - ID47 [exampleSDID@32473 iut="3" eventSource=
- * "Application" eventID="1011"][alarm resource="su root"
+ * "Application" eventID="1011"][alarms resource="su root"
  * probableCause="unauthorizedAccessAttempt"
  * perceivedSeverity="major"]
  * BOMAn application event log entry...
@@ -27,8 +27,8 @@ package com.sohail.alam.http.alarm;
  * the PROCID is unknown.  The MSGID is "ID47".  We have included both
  * the structured data from the original example, a single element with
  * the value "[exampleSDID@32473 iut="3" eventSource="Application"
- * eventID="1011"]", and a new element with the alarm information
- * defined in this memo.  The alarm SD-ID contains the mandatory SD-
+ * eventID="1011"]", and a new element with the alarms information
+ * defined in this memo.  The alarms SD-ID contains the mandatory SD-
  * PARAMS of resource, probableCause, and preceivedSeverity.  The MSG
  * itself is "An application event log entry..."  The BOM at the
  * beginning of the MSG indicates UTF-8 encoding.
@@ -37,24 +37,24 @@ package com.sohail.alam.http.alarm;
  * <p/>
  * <pre>
  * &lt;165&gt;1 2004-11-10T20:15:15.003Z mymachine.example.com
- * evntslog - ID48 [alarm resource="interface 42"
+ * evntslog - ID48 [alarms resource="interface 42"
  * probableCause="unauthorizedAccessAttempt"
  * perceivedSeverity="major"
  * eventType="communicationsAlarm"
  * resourceURI="snmp://example.com//1.3.6.1.2.1.2.2.1.1.42"]
  * </pre>
  * <p/>
- * In this example, we include two optional alarm fields: eventType and
+ * In this example, we include two optional alarms fields: eventType and
  * resourceURI.
  */
 public class AlarmStructuredData {
     /**
-     * The unique ID for the alarm
+     * The unique ID for the alarms
      */
     public String id;
     /**
      * MANDATORY
-     * This item uniquely identifies the resource under alarm
+     * This item uniquely identifies the resource under alarms
      * within the scope of a network element
      */
     public String resourceUnderAlarm;
@@ -88,11 +88,11 @@ public class AlarmStructuredData {
     public String trendIndication;
     /**
      * OPTIONAL
-     * This item uniquely identifies the resource under alarm.
+     * This item uniquely identifies the resource under alarms.
      * The value of this field MUST conform to the URI definition in
      * [RFC3986] and its updates.  In the case of an SNMP resource, the
      * syntax in [RFC4088] MUST be used and "resourceURI" must point to the
-     * same resource as alarmActiveResourceId [RFC3877] for this alarm.
+     * same resource as alarmActiveResourceId [RFC3877] for this alarms.
      */
     public String resourceURI;
 }
