@@ -257,8 +257,8 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
          * @param dataLength the data length
          */
         @Override
-        public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
-            LOGGER.debug("File Successfully fetched, length: {}", data.length);
+        public void fetchSuccess(String path, byte[] data, String mediaType, long dataLength) {
+            LOGGER.debug("File {} Successfully fetched, length: {}", path, data.length);
             headers.put(CONTENT_TYPE, mediaType);
             headers.put(CONTENT_LENGTH, String.valueOf(dataLength));
             send200OK(ctx, headers, data, true);

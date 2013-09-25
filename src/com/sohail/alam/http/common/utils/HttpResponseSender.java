@@ -180,7 +180,7 @@ public class HttpResponseSender {
             FETCHER.fetch(PROP.DEFAULT_404_PAGE, new LocalFileFetcherCallback() {
                 // Send the default 404 Page if found
                 @Override
-                public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
+                public void fetchSuccess(String path, byte[] data, String mediaType, long dataLength) {
                     headers.put(CONTENT_TYPE, mediaType);
                     headers.put(CONTENT_LENGTH, String.valueOf(dataLength));
                     // Send data as 404 Not Found

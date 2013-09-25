@@ -108,7 +108,7 @@ public class LocalFileFetcherTest {
     public void testGetBytes() throws Exception {
         fetcher.fetch(PROP.DEFAULT_INDEX_PAGE, new LocalFileFetcherCallback() {
             @Override
-            public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength) {
+            public void fetchSuccess(String path, byte[] data, String mediaType, long dataLength) {
                 Assert.assertTrue("Data Received of length <= 0", data.length > 0);
             }
 

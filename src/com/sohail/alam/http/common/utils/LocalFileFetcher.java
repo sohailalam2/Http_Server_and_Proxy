@@ -1,5 +1,7 @@
 package com.sohail.alam.http.common.utils;
 
+import com.sohail.alam.http.common.smartcache.SmartCache;
+import com.sohail.alam.http.common.smartcache.SmartCachePojo;
 import com.sohail.alam.http.common.utils.php.PhpProcessor;
 import com.sohail.alam.http.common.utils.php.PhpProcessorCallback;
 import com.sohail.alam.http.server.ServerProperties;
@@ -113,6 +115,13 @@ public class LocalFileFetcher {
         final byte[] fileBytes;
         final File file = new File(this.normalizePath(path));
         FileInputStream is = null;
+        SmartCachePojo pojo;
+
+        if ((pojo = SmartCache.cache().get(file.getAbsolutePath())) != null) {
+            LOGGER.debug("Fetched file from Cache => {}", file.getAbsoluteFile());
+            callback.fetchSuccess(path, pojo.fileData, pojo.mediaType, pojo.fileSize);
+            return;
+        }
 
         try {
             // If the file referred is a PHP File then
@@ -121,11 +130,16 @@ public class LocalFileFetcher {
             if (PROP.ENABLE_PHP && file.getName().endsWith(".php")) {
                 processPhpFile(file.getAbsolutePath(), callback);
             } else {
+                String mediaType = MediaType.getType(parseFileType(file.getName()));
                 is = new FileInputStream(file);
                 fileBytes = new byte[is.available()];
                 int length = is.read(fileBytes);
-                LOGGER.debug("File '{}' Fetched Successfully - {} bytes", path, length);
-                callback.fetchSuccess(path, fileBytes, MediaType.getType(parseFileType(file.getName())), length);
+                LOGGER.debug("File '{}' Fetched Successfully - {} bytes", file.getAbsoluteFile(), length);
+
+                pojo = new SmartCachePojo(file, fileBytes, length, mediaType);
+                SmartCache.cache().put(file.getAbsolutePath(), pojo);
+
+                callback.fetchSuccess(path, fileBytes, mediaType, length);
             }
         } catch (FileNotFoundException e) {
             LOGGER.debug("Exception Caught: {}", e.getMessage());

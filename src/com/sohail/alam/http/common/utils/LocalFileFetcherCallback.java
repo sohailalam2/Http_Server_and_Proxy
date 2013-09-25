@@ -18,7 +18,7 @@ public interface LocalFileFetcherCallback {
      * @param mediaType  the media type
      * @param dataLength the data length
      */
-    public void fetchSuccess(String path, byte[] data, String mediaType, int dataLength);
+    public void fetchSuccess(String path, byte[] data, String mediaType, long dataLength);
 
     /**
      * Fetch failed is called whenever there was an error reading the file
