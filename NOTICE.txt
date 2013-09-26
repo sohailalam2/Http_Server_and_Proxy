@@ -21,5 +21,3 @@ the 'license' directory of the distribution file, for the license terms of the
 components that this product depends on.
 
 -------------------------------------------------------------------------------
-
-This product does not have any dependencies other that Java.
