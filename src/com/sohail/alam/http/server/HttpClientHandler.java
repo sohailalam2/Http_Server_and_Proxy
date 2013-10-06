@@ -24,6 +24,8 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
     private HttpRequest request;
     private ChannelHandlerContext ctx;
     private HttpMethod requestMethod;
-    private String requestUri;
+    private String requestUriPath;
 
     /**
      * Instantiates a new Http client handler.
@@ -109,8 +111,13 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
      */
     private void processHttpRequest() {
         this.requestMethod = request.getMethod();
-        this.requestUri = request.getUri();
-        LOGGER.info("Request Received: => {} => {} => {}", this.ctx.channel().remoteAddress(), this.requestMethod, this.requestUri);
+        try {
+            URI uri = new URI(request.getUri());
+            this.requestUriPath = uri.getPath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        LOGGER.info("Request Received: => {} => {} => {}", this.ctx.channel().remoteAddress(), this.requestMethod, this.requestUriPath);
         LOGGER.debug("Processing Http Request:\n{}", request);
 
         switch (HttpMethodCodes.httpMethodCode.get(this.requestMethod)) {
@@ -218,7 +225,7 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
      * Process http get request.
      */
     private void processHttpGetRequest() {
-        FETCHER.fetch(this.requestUri, new FileFetcherCallback());
+        FETCHER.fetch(this.requestUriPath, new FileFetcherCallback());
     }
 
     /**

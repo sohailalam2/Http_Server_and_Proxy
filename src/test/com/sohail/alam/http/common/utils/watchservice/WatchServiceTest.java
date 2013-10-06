@@ -17,9 +17,9 @@
 package test.com.sohail.alam.http.common.utils.watchservice;
 
 import com.sohail.alam.http.common.utils.LocalFileFetcher;
-import com.sohail.alam.http.common.utils.watchservice.WatchService;
-import com.sohail.alam.http.common.utils.watchservice.WatchServiceCallback;
-import com.sohail.alam.http.common.utils.watchservice.WatchServiceException;
+import com.sohail.alam.http.common.watchservice.WatchService;
+import com.sohail.alam.http.common.watchservice.WatchServiceCallback;
+import com.sohail.alam.http.common.watchservice.WatchServiceException;
 
 import java.io.File;
 

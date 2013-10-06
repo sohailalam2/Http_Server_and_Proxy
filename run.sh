@@ -58,7 +58,6 @@ if [ "$linux" = "true" ]; then
       JAVA_OPTS="$JAVA_OPTS -XX:CMSInitiatingOccupancyFraction=75"
       JAVA_OPTS="$JAVA_OPTS -XX:+UseCMSInitiatingOccupancyOnly"
       JAVA_OPTS="$JAVA_OPTS -XX:-HeapDumpOnOutOfMemoryError"
-      JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/root/sohail/vv-sms/dump.hprof"
       JAVA_OPTS="$JAVA_OPTS -Dio.netty.allocator.numDirectArenas=16"
       JAVA_OPTS="$JAVA_OPTS -Dio.netty.noResourceLeakDetection=true"
 fi

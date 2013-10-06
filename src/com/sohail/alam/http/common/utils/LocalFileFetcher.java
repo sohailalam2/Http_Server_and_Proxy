@@ -16,10 +16,10 @@
 
 package com.sohail.alam.http.common.utils;
 
+import com.sohail.alam.http.common.php.PhpProcessor;
+import com.sohail.alam.http.common.php.PhpProcessorCallback;
 import com.sohail.alam.http.common.smartcache.SmartCache;
 import com.sohail.alam.http.common.smartcache.SmartCachePojo;
-import com.sohail.alam.http.common.utils.php.PhpProcessor;
-import com.sohail.alam.http.common.utils.php.PhpProcessorCallback;
 import com.sohail.alam.http.server.ServerProperties;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public class LocalFileFetcher {
         if (path.startsWith("/" + ServerProperties.PROP.WEBAPP_PATH)) {
             normalizedPath = "." + path;
         } else {
-            normalizedPath = "./www" + path;
+            normalizedPath = ServerProperties.PROP.WEBAPP_PATH + path;
         }
         LOGGER.debug("Normalizing Path '{}' to '{}'", path, normalizedPath);
         return normalizedPath;

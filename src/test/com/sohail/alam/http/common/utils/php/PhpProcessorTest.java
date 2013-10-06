@@ -16,8 +16,8 @@
 
 package test.com.sohail.alam.http.common.utils.php;
 
-import com.sohail.alam.http.common.utils.php.PhpProcessor;
-import com.sohail.alam.http.common.utils.php.PhpProcessorCallback;
+import com.sohail.alam.http.common.php.PhpProcessor;
+import com.sohail.alam.http.common.php.PhpProcessorCallback;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
